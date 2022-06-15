@@ -19,11 +19,8 @@ class CreateRefitPFO : public marlin::Processor{
 
         int getTrackPDG(EVENT::Track* track, UTIL::LCRelationNavigator& nav);
 		int getTrackIndex(EVENT::LCCollection* trackCollection, EVENT::Track* selectedTrack);
-		TLorentzVector getTrackFourMomentum(EVENT::Track* track , double mass);
-		std::vector<float> updateChargedPFOCovMat(EVENT::Track* track , double mass);
     private:
         int _nEvt;
-        double _bField;        
 };
 
 #endif
