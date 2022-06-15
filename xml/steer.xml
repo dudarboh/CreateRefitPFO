@@ -1,0 +1,36 @@
+<marlin>
+
+    <constants>
+    </constants>
+
+    <global>
+		<parameter name="LCIOInputFiles">
+            /pnfs/desy.de/ilc/prod/ilc/mc-2020/ild/rec/250-SetA/2f_hadronic_eL_pR/ILD_l5_o1_v02/v02-02/00015161/000/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.n000_052.d_rec_00015161_219.slcio
+        </parameter>
+		<parameter name="MaxRecordNumber" value="0" />
+        <parameter name="SkipNEvents" value="0" />
+        <parameter name="SupressCheck" value="false" />
+		<parameter name="AllowToModifyEvent" value="false" />
+
+	</global>
+
+	<execute>
+        <processor name="InitDD4hep" />
+        <processor name="CreateRefitPFO"/>
+        <processor name="DecayChainDrawer"/>
+	</execute>
+
+    <processor name="DecayChainDrawer" type="DecayChainDrawer">
+    </processor>
+
+
+    <processor name="InitDD4hep" type="InitializeDD4hep">
+        <parameter name="DD4hepXMLFile" type="string">
+            /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02/lcgeo/v00-16-06/ILD/compact/ILD_l5_o1_v02/ILD_l5_o1_v02.xml
+        </parameter>
+    </processor>
+
+    <processor name="CreateRefitPFO" type="CreateRefitPFO">
+    </processor>
+
+</marlin>
