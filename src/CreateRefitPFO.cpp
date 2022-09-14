@@ -49,7 +49,7 @@ void CreateRefitPFO::processEvent( EVENT::LCEvent* event ){
 
         // create new PFO substituting tracks and 4mom and cov matrix in simple cases. Everything else just copy from the old pfo
         ReconstructedParticleImpl* outputPFO = new ReconstructedParticleImpl();
-        for(size_t j=0; j<pfo->getTracks().size(); ++j) outputPFO->addTrack(refittedTracks[j]);
+        for(size_t j=0; j<nTracks; ++j) outputPFO->addTrack(refittedTracks[j]);
 
         if (nTracks == 1 && ( std::abs(tracksPdg[0]) == 321 || std::abs(tracksPdg[0]) == 2212 ) ){
             double mass = 0.13957039;
@@ -57,16 +57,19 @@ void CreateRefitPFO::processEvent( EVENT::LCEvent* event ){
             else if ( std::abs(tracksPdg[0]) == 2212 ) mass = 0.938272088;
         
             //do calculations
-            std::vector<float> covMatrix = updateChargedPFOCovMat(refittedTracks[0], mass);
+            // std::vector<float> covMatrix = updateChargedPFOCovMat(refittedTracks[0], mass);
+            std::vector<float> covMatrix = updateChargedPFOCovMat(refittedTracks[0], 0.13957039);
             TLorentzVector fourMomentum = getTrackFourMomentum(refittedTracks[0], mass);
             const double momentum[3] = {fourMomentum.Px(), fourMomentum.Py(), fourMomentum.Pz()};
         
             //update these parameters, copy everything else
             outputPFO->setType(tracksPdg[0]);
             outputPFO->setMomentum(momentum);
-            outputPFO->setEnergy(fourMomentum.E());
             outputPFO->setCovMatrix(covMatrix);
-            outputPFO->setMass(fourMomentum.M());
+            // outputPFO->setEnergy(fourMomentum.E());
+            // outputPFO->setMass(fourMomentum.M());
+            outputPFO->setEnergy( pfo->getEnergy() );
+            outputPFO->setMass( pfo->getMass() );
         }
         else if ( nTracks == 2 && pfo->getCharge() == 0. ){
             double mass1 = 0.13957039;
@@ -81,23 +84,27 @@ void CreateRefitPFO::processEvent( EVENT::LCEvent* event ){
             TLorentzVector fourMomentum = fourMomentum1 + fourMomentum2;
             const double momentum[3] = {fourMomentum.Px(), fourMomentum.Py(), fourMomentum.Pz()};
         
-            std::vector<float> covMatrix1 = updateChargedPFOCovMat(refittedTracks[0], mass1);
-            std::vector<float> covMatrix2 = updateChargedPFOCovMat(refittedTracks[1], mass2);
+            // std::vector<float> covMatrix1 = updateChargedPFOCovMat(refittedTracks[0], mass1);
+            // std::vector<float> covMatrix2 = updateChargedPFOCovMat(refittedTracks[1], mass2);
+            std::vector<float> covMatrix1 = updateChargedPFOCovMat(refittedTracks[0], 0.13957039);
+            std::vector<float> covMatrix2 = updateChargedPFOCovMat(refittedTracks[1], 0.13957039);
             std::vector<float> covMatrix;
             for(size_t j=0; j<covMatrix1.size(); ++j) covMatrix.push_back( covMatrix1[j] + covMatrix2[j] );
         
             //update these parameters, copy everything else
             outputPFO->setType(pfo->getType());
             outputPFO->setMomentum(momentum);
-            outputPFO->setEnergy(fourMomentum.E());
             outputPFO->setCovMatrix(covMatrix);
-            outputPFO->setMass(fourMomentum.M());
+            // outputPFO->setEnergy(fourMomentum.E());
+            // outputPFO->setMass(fourMomentum.M());
+            outputPFO->setEnergy( pfo->getEnergy() );
+            outputPFO->setMass( pfo->getMass() );
         }
         else{
             outputPFO->setType(pfo->getType());
             outputPFO->setMomentum(pfo->getMomentum());
-            outputPFO->setEnergy(pfo->getEnergy());
             outputPFO->setCovMatrix(pfo->getCovMatrix());
+            outputPFO->setEnergy(pfo->getEnergy());
             outputPFO->setMass(pfo->getMass());
         }
         outputPFO->setCharge(pfo->getCharge());
