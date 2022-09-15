@@ -49,7 +49,7 @@ void CreateRefitPFO::processEvent( EVENT::LCEvent* event ){
 
         // create new PFO substituting tracks and 4mom and cov matrix in simple cases. Everything else just copy from the old pfo
         ReconstructedParticleImpl* outputPFO = new ReconstructedParticleImpl();
-        for(size_t j=0; j<nTracks; ++j) outputPFO->addTrack(refittedTracks[j]);
+        for(int j=0; j<nTracks; ++j) outputPFO->addTrack(refittedTracks[j]);
 
         if (nTracks == 1 && ( std::abs(tracksPdg[0]) == 321 || std::abs(tracksPdg[0]) == 2212 ) ){
             double mass = 0.13957039;
@@ -148,6 +148,7 @@ int CreateRefitPFO::getTrackPDG(EVENT::Track* track, UTIL::LCRelationNavigator& 
 }
 
 TLorentzVector CreateRefitPFO::getTrackFourMomentum(EVENT::Track* track, double mass){
+    if ( track->getOmega() == 0 ) return TLorentzVector();
 	double pt = 0.299792458e-3 * _bField / std::abs( track->getOmega() );
 	double px = pt*std::cos( track->getPhi() );
 	double py = pt*std::sin( track->getPhi() );
@@ -174,6 +175,7 @@ std::vector<float> CreateRefitPFO::updateChargedPFOCovMat(EVENT::Track* track, d
 	const int columns = 4; // n columns jacobian
 
 	double omega = track->getOmega();
+    if (omega == 0) return std::vector<float>(10, 0); 
     double pt = 0.299792458e-3 * _bField / std::abs( track->getOmega() );
 	double px = pt*std::cos( track->getPhi() );
 	double py = pt*std::sin( track->getPhi() );
