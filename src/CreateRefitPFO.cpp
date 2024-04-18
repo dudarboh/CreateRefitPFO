@@ -141,6 +141,7 @@ int CreateRefitPFO::getTrackPDG(EVENT::Track* track, UTIL::LCRelationNavigator& 
 }
 
 TLorentzVector CreateRefitPFO::getTrackFourMomentum(EVENT::Track* track, double mass){
+    if ( track->getOmega() == 0. ) return TLorentzVector();
 	double pt = 0.299792458e-3 * _bField / std::abs( track->getOmega() );
 	double px = pt*std::cos( track->getPhi() );
 	double py = pt*std::sin( track->getPhi() );
@@ -167,6 +168,8 @@ std::vector<float> CreateRefitPFO::updateChargedPFOCovMat(EVENT::Track* track, d
 	const int columns = 4; // n columns jacobian
 
 	double omega = track->getOmega();
+    if (omega == 0.0) return std::vector<float>(10, 0); 
+
     double pt = 0.299792458e-3 * _bField / std::abs( track->getOmega() );
 	double px = pt*std::cos( track->getPhi() );
 	double py = pt*std::sin( track->getPhi() );
